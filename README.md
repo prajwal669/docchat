@@ -123,7 +123,7 @@ All settings are environment variables; see `.env.example`. The defaults for chu
 
 ## Public demo mode and deployment
 
-Set `RAG_DEMO_MODE=1` to run a read-only public demo. The sample documents are loaded at startup, uploads, deletes and sample-loading are refused with a clear message, nothing is written to disk, and answers always use the offline answerer, so a public site can never spend API credits. The page hides the upload and remove buttons.
+Set `RAG_DEMO_MODE=1` to run a public demo. The sample documents are loaded at startup, nothing is written to disk, and answers always use the offline answerer. By default, uploads and deletes are disabled. For a portfolio demonstration only, `RAG_PUBLIC_UPLOADS=1` enables visitor uploads while keeping deletion disabled. Uploaded documents are shared with all visitors, held only in memory, and disappear when the service restarts or redeploys. Do not upload private or sensitive files. Set conservative `RAG_MAX_UPLOAD_MB` and `RAG_MAX_PAGES` limits. This mode has no authentication or per-visitor separation, so it is not suitable for confidential or production use.
 
 The repository includes `render.yaml` for [Render](https://render.com), which can build the Dockerfile straight from GitHub. When this was written, Render's free web services slept after 15 minutes without traffic and took about a minute to wake, included 750 instance hours a month, and had a temporary filesystem. That last point is why a public deployment should use demo mode. Check Render's current free-tier terms before relying on them.
 

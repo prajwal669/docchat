@@ -43,3 +43,21 @@ def test_demo_never_uses_the_paid_model_even_with_a_key(demo, monkeypatch):
 
 def test_normal_mode_is_not_demo(client):
     assert client.get("/api/health").json()["demo_mode"] is False
+
+
+def test_public_uploads_allowed_but_deletes_stay_disabled(tmp_path, sample_files):
+    settings = make_settings(tmp_path, demo_mode=True, public_uploads=True, max_upload_mb=5, max_pages=50)
+    client = TestClient(create_app(settings=settings))
+    before = len(client.get("/api/documents").json())
+    response = client.post(
+        "/api/documents",
+        files=[("files", ("visitor.txt", io.BytesIO(b"A public test document with enough text."), "text/plain"))],
+    )
+    assert response.status_code == 200
+    assert response.json()["results"][0]["status"] == "added"
+    docs = client.get("/api/documents").json()
+    assert len(docs) == before + 1
+    assert client.delete(f"/api/documents/{docs[-1]['id']}").status_code == 403
+    health = client.get("/api/health").json()
+    assert health["demo_mode"] is True and health["public_uploads"] is True
+    assert not (settings.storage_dir / "store.json").exists()

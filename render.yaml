@@ -10,5 +10,11 @@ services:
     envVars:
       - key: RAG_DEMO_MODE
         value: "1"
+      - key: RAG_PUBLIC_UPLOADS
+        value: "1"
+      - key: RAG_MAX_UPLOAD_MB
+        value: "5"
+      - key: RAG_MAX_PAGES
+        value: "50"
       - key: PORT
         value: 10000

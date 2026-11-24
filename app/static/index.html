@@ -54,6 +54,7 @@
   .drop span { color: #aeb8d0; font-size: 13px; }
 
   .demo .drop, .demo .icon-btn { display: none; }
+  .demo.public-upload .drop { display: block; }
   .demo-note { color: #aeb8d0; font-size: 13.5px; margin: 0; max-width: 28ch; }
 
   .docs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -172,7 +173,7 @@
     </button>
     <input type="file" id="file" multiple accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" hidden>
 
-    <p class="demo-note" id="demo-note" hidden>This is a public demo with sample documents. Run DocChat on your own computer to ask about your own files.</p>
+    <p class="demo-note" id="demo-note" hidden>This public demo uses shared, temporary storage. Uploaded documents are visible to all visitors and may disappear when the server restarts. Do not upload private or sensitive files.</p>
     <ul class="docs" id="docs" aria-label="Documents"></ul>
     <p class="library-empty" id="library-empty" hidden>
       No documents yet. <button type="button" class="link-btn" id="samples">Load the sample documents</button> to try it out.
@@ -462,7 +463,11 @@
       const select = $("retriever");
       for (const name of health.retrievers) select.append(el("option", { value: name, text: LABELS[name] || name }));
       select.value = health.default_retriever;
-      if (health.demo_mode) { document.body.classList.add("demo"); $("demo-note").hidden = false; }
+      if (health.demo_mode) {
+        document.body.classList.add("demo");
+        $("demo-note").hidden = false;
+        if (health.public_uploads) document.body.classList.add("public-upload");
+      }
       $("engine-hint").textContent = health.answerer === "extractive"
         ? "Answers are assembled from matching sentences. Set ANTHROPIC_API_KEY on the server for written answers."
         : "Answers are written by " + health.answerer + ", using only the retrieved passages.";

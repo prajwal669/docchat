@@ -59,8 +59,8 @@ def create_app(pipeline: Pipeline | None = None, settings: Settings | None = Non
     def pipe() -> Pipeline:
         return app.state.pipeline
 
-    def forbid_in_demo() -> None:
-        if settings.demo_mode:
+    def forbid_in_demo(*, allow_public_uploads: bool = False) -> None:
+        if settings.demo_mode and not (allow_public_uploads and settings.public_uploads):
             raise HTTPException(
                 403, "This public demo is read-only. Run DocChat on your own computer to use your own documents."
             )
@@ -77,6 +77,7 @@ def create_app(pipeline: Pipeline | None = None, settings: Settings | None = Non
             "default_retriever": settings.retriever,
             "max_upload_mb": settings.max_upload_mb,
             "demo_mode": settings.demo_mode,
+            "public_uploads": settings.public_uploads,
         }
 
     @app.get("/api/documents")
@@ -85,7 +86,7 @@ def create_app(pipeline: Pipeline | None = None, settings: Settings | None = Non
 
     @app.post("/api/documents")
     async def upload(files: list[UploadFile] = File(...)):
-        forbid_in_demo()
+        forbid_in_demo(allow_public_uploads=True)
         results = []
         for f in files:
             name = f.filename or "document"

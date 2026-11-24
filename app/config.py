@@ -57,6 +57,12 @@ class Settings:
     max_upload_mb: int = field(default_factory=lambda: _int("RAG_MAX_UPLOAD_MB", 20))
     max_pages: int = field(default_factory=lambda: _int("RAG_MAX_PAGES", 500))
 
+    # Allow uploads in the public, in-memory demo. Uploaded files are shared by
+    # all visitors and disappear when the service restarts or redeploys.
+    public_uploads: bool = field(
+        default_factory=lambda: os.getenv("RAG_PUBLIC_UPLOADS", "").strip().lower() in ("1", "true", "yes", "on")
+    )
+
     # LLM (optional). Without ANTHROPIC_API_KEY the app uses the extractive answerer.
     llm_model: str = field(default_factory=lambda: os.getenv("RAG_LLM_MODEL", "claude-sonnet-5-5"))
     llm_max_tokens: int = field(default_factory=lambda: _int("RAG_LLM_MAX_TOKENS", 600))
