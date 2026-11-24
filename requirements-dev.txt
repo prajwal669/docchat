@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest>=8
+httpx>=0.27
+reportlab>=4.0
+# Optional: enables the "dense" and "hybrid_dense" retrievers (downloads a ~130 MB model on first use)
+# fastembed>=0.3

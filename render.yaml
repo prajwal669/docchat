@@ -1,0 +1,14 @@
+# Render Blueprint: builds the Dockerfile from this repository and runs it as a read-only public demo.
+services:
+  - type: web
+    name: docchat
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: RAG_DEMO_MODE
+        value: "1"
+      - key: PORT
+        value: 10000
